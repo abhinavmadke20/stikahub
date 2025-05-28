@@ -23,57 +23,6 @@ class _RegisterProfileState extends State<RegisterProfile> {
   bool visiblityPassword = false;
   bool visiblityConfirmPassword = false;
 
-  String? _validateName(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return 'Name is required';
-    }
-    if (value.trim().length < 2) {
-      return 'Name must be at least 2 characters long';
-    }
-    if (value.trim().length > 50) {
-      return 'Name must not exceed 50 characters';
-    }
-    if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value.trim())) {
-      return 'Name can only contain letters and spaces';
-    }
-    return null;
-  }
-
-  String? _validatePassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Password is required';
-    }
-    if (value.length < 8) {
-      return 'Password must be at least 8 characters long';
-    }
-    if (value.length > 128) {
-      return 'Password must not exceed 128 characters';
-    }
-    if (!RegExp(r'[A-Z]').hasMatch(value)) {
-      return 'Password must contain at least one uppercase letter';
-    }
-    if (!RegExp(r'[a-z]').hasMatch(value)) {
-      return 'Password must contain at least one lowercase letter';
-    }
-    if (!RegExp(r'[0-9]').hasMatch(value)) {
-      return 'Password must contain at least one number';
-    }
-    if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) {
-      return 'Password must contain at least one special character';
-    }
-    return null;
-  }
-
-  String? _validateConfirmPassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please confirm your password';
-    }
-    if (value != _passwordController.text) {
-      return 'Passwords do not match';
-    }
-    return null;
-  }
-
   void _handleContinue() {
     if (_formKey.currentState!.validate()) {
       Navigator.push(
@@ -158,7 +107,10 @@ class _RegisterProfileState extends State<RegisterProfile> {
                           controller: _nameController,
                           hintText: "Sanni Dancer",
                           obscureText: false,
-                          validator: _validateName,
+                          validator: (value) =>
+                              OnboardingFieldsValidator().validateName(
+                            value,
+                          ),
                           onSubmit: (value) {},
                         ),
                         addVerticalSpace(AppSpacing.md),
@@ -169,7 +121,8 @@ class _RegisterProfileState extends State<RegisterProfile> {
                           controller: _passwordController,
                           hintText: "*********",
                           obscureText: !visiblityPassword,
-                          validator: _validatePassword,
+                          validator: (value) => OnboardingFieldsValidator()
+                              .validatePassword(value),
                           suffix: GestureDetector(
                             onTap: () {
                               setState(() {
@@ -192,7 +145,11 @@ class _RegisterProfileState extends State<RegisterProfile> {
                           controller: _confirmPasswordController,
                           hintText: "*********",
                           obscureText: !visiblityConfirmPassword,
-                          validator: _validateConfirmPassword,
+                          validator: (value) => OnboardingFieldsValidator()
+                              .validateConfirmPassword(
+                            value,
+                            _passwordController,
+                          ),
                           suffix: GestureDetector(
                             onTap: () {
                               setState(() {
