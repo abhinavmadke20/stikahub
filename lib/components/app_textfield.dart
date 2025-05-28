@@ -49,7 +49,8 @@ class AppTextField extends StatelessWidget {
           onFieldSubmitted: onSubmit,
           onTap: onTap,
           obscureText: obscureText,
-          maxLines: maxLines,
+          maxLines: obscureText ? 1 : maxLines,
+          validator: validator,
           decoration: InputDecoration(
             hintText: hintText,
             suffix: suffix,
