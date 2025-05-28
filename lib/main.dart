@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:stikahub/screens/home/home_screen.dart';
 
+import 'screens/onboarding/onboarding.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -10,9 +12,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
+      home: RegisterProfile(),
     );
   }
 }
