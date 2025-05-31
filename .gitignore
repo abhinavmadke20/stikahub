@@ -3,7 +3,6 @@
 *.log
 *.pyc
 *.swp
-*.env
 .DS_Store
 .atom/
 .buildlog/
@@ -31,6 +30,12 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
+
+# Environment variables (IMPORTANT FOR SECURITY)
+.env
+.env.local
+.env.*.local
+*.env
 
 # Symbolication related
 app.*.symbols
