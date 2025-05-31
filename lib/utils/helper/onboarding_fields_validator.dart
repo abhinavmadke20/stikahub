@@ -17,6 +17,26 @@ class OnboardingFieldsValidator {
     return null;
   }
 
+  String? validateEmail(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Email is required';
+    }
+    if (value.trim().length > 254) {
+      return 'Email must not exceed 254 characters';
+    }
+    if (!RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$').hasMatch(value.trim())) {
+      return 'Please enter a valid email address';
+    }
+    if (value.trim().contains('..')) {
+      return 'Please enter a valid email address';
+    }
+    String localPart = value.trim().split('@')[0];
+    if (localPart.length > 64) {
+      return 'Email local part must not exceed 64 characters';
+    }
+    return null;
+  }
+
   String? validatePassword(String? value) {
     if (value == null || value.isEmpty) {
       return 'Password is required';

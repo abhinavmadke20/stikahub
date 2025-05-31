@@ -14,10 +14,12 @@ class RegisterProfile extends StatefulWidget {
 class _RegisterProfileState extends State<RegisterProfile> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
   final FocusNode _nameFocusNode = FocusNode();
+    final FocusNode _emailFocusNode = FocusNode();
   final FocusNode _passwordFocusNode = FocusNode();
   final FocusNode _confirmPasswordFocusNode = FocusNode();
   bool visiblityPassword = false;
@@ -28,7 +30,11 @@ class _RegisterProfileState extends State<RegisterProfile> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => const UploadAvatarScreen(),
+          builder: (context) => UploadAvatarScreen(
+            name: _nameController.text,
+            email: _emailController.text,
+            password: _confirmPasswordController.text,
+          ),
         ),
       );
     } else {
@@ -36,6 +42,8 @@ class _RegisterProfileState extends State<RegisterProfile> {
 
       if (_nameController.text.trim().isEmpty) {
         errorMessage = 'Name is required';
+      } else if(_emailController.text.isEmpty) {
+        errorMessage = 'Email is required';
       } else if (_passwordController.text.isEmpty) {
         errorMessage = 'Password is required';
       } else if (_confirmPasswordController.text.isEmpty) {
@@ -109,6 +117,19 @@ class _RegisterProfileState extends State<RegisterProfile> {
                           obscureText: false,
                           validator: (value) =>
                               OnboardingFieldsValidator().validateName(
+                            value,
+                          ),
+                          onSubmit: (value) {},
+                        ),
+                        addVerticalSpace(AppSpacing.md),
+                        AppTextField(
+                          focusNode: _emailFocusNode,
+                          title: "Your Email",
+                          controller: _emailController,
+                          hintText: "sannidancer69@gmail.com",
+                          obscureText: false,
+                          validator: (value) =>
+                              OnboardingFieldsValidator().validateEmail(
                             value,
                           ),
                           onSubmit: (value) {},

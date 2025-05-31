@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "663316341435",
+    "project_id": "stikahub",
+    "storage_bucket": "stikahub.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:663316341435:android:c92dd12f97d70a21d6ff9e",
+        "android_client_info": {
+          "package_name": "com.example.stikahub"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCW_tWxIEvIuuv5QkqLo_inI8yw1EiSOfY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

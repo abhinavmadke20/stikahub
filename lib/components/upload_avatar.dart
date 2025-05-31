@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:stikahub/repositories/authentication/authentication_repository.dart';
 import 'package:stikahub/repositories/upload/upload.dart';
 
 import '../theme/theme.dart';
@@ -8,7 +9,10 @@ import '../utils/utils.dart';
 import 'components.dart';
 
 class UploadAvatarScreen extends StatefulWidget {
-  const UploadAvatarScreen({super.key});
+  final String name;
+  final String email;
+  final String password;
+  const UploadAvatarScreen({super.key, required this.name, required this.email, required this.password});
 
   @override
   State<UploadAvatarScreen> createState() => _UploadAvatarScreenState();
@@ -48,6 +52,9 @@ class _UploadAvatarScreenState extends State<UploadAvatarScreen> {
 
   @override
   Widget build(BuildContext context) {
+    UploadFilesRepo uploadFilesRepo = UploadFilesRepo();
+    AuthenticationRepository authenticationRepository =
+        AuthenticationRepository();
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
@@ -85,8 +92,8 @@ class _UploadAvatarScreenState extends State<UploadAvatarScreen> {
                                 leading: const Icon(Icons.camera_alt),
                                 title: const Text('Take Photo'),
                                 onTap: () async {
-                                  final File? image =
-                                      await _uploadRepo.pickImageFromCamera(context);
+                                  final File? image = await _uploadRepo
+                                      .pickImageFromCamera(context);
                                   if (image != null) {
                                     setState(() {
                                       imageFile = image;
@@ -152,12 +159,26 @@ class _UploadAvatarScreenState extends State<UploadAvatarScreen> {
                 width: double.infinity,
                 height: 50,
                 child: AppButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if (imageFile == null) {
                       showCustomSnackBar(
                         context,
                         message: 'Please select an image first.',
                         isError: false,
+                      );
+                    } else {
+                      String avatarUrl = await uploadFilesRepo.uploadUserAvatar(
+                        context,
+                        image: imageFile!,
+                      );
+
+                      await authenticationRepository.signUpUser(
+                        // ignore: use_build_context_synchronously
+                        context,
+                        name: widget.name,
+                        avatar: avatarUrl,
+                        email: widget.email,
+                        password: widget.password,
                       );
                     }
                   },
