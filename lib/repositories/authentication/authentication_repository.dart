@@ -18,9 +18,9 @@ class AuthenticationRepository {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
   Stream<User?> get authStateChanges => auth.authStateChanges();
-  
+
   User? get currentUser => auth.currentUser;
-  
+
   checkAuthentication() async {
     auth.authStateChanges().listen((User? user) async {
       if (user == null) {
@@ -33,7 +33,24 @@ class AuthenticationRepository {
     });
   }
 
- Future<bool> checkIfUserAlreadyExists(String uuid) async {
+  Future<ProfileModel> getUserProfile() async {
+    return await FirebaseFirestore.instance
+        .collection('users')
+        .doc(auth.currentUser!.uid)
+        .get()
+        .then((doc) {
+      if (doc.exists) {
+        return ProfileModel.fromMap(doc.data()!);
+      } else {
+        throw Exception('User profile not found');
+      }
+    }).catchError((error) {
+      print('Error fetching user profile: $error');
+      throw error;
+    });
+  }
+
+  Future<bool> checkIfUserAlreadyExists(String uuid) async {
     try {
       if (auth.currentUser == null) {
         print('User not authenticated when checking if user exists');
@@ -46,7 +63,8 @@ class AuthenticationRepository {
           .get();
       return querySnapshot.docs.isNotEmpty;
     } on FirebaseException catch (e) {
-      print('Firestore error checking if user exists: ${e.code} - ${e.message}');
+      print(
+          'Firestore error checking if user exists: ${e.code} - ${e.message}');
       return false;
     } catch (e) {
       print('Error checking if user exists: $e');
@@ -59,19 +77,19 @@ class AuthenticationRepository {
     return prefs.getBool("isSignedIn") ?? false;
   }
 
-    Future<AuthStatus> getAuthenticationStatus() async {
+  Future<AuthStatus> getAuthenticationStatus() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       bool prefsSignedIn = prefs.getBool("isSignedIn") ?? false;
       User? currentUser = auth.currentUser;
-      
+
       if (!prefsSignedIn || currentUser == null) {
         return AuthStatus.signedOut;
       }
-      
+
       // Check if user profile exists in Firestore
       bool profileExists = await checkIfUserAlreadyExists(currentUser.uid);
-      
+
       if (profileExists) {
         return AuthStatus.signedInWithProfile;
       } else {
@@ -91,8 +109,7 @@ class AuthenticationRepository {
     required String password,
   }) async {
     try {
-      UserCredential userCredential =
-          await auth.createUserWithEmailAndPassword(
+      UserCredential userCredential = await auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -109,7 +126,8 @@ class AuthenticationRepository {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setBool("isSignedIn", true);
 
-        showCustomSnackBar(context, message: "Account has been created!", isError: false);
+        showCustomSnackBar(context,
+            message: "Account has been created!", isError: false);
         return true;
       }
       return false;
@@ -202,13 +220,14 @@ class AuthenticationRepository {
     }
   }
 
-Future<bool> signOut(BuildContext context) async {
+  Future<bool> signOut(BuildContext context) async {
     try {
       await auth.signOut();
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setBool("isSignedIn", false);
-      
-      showCustomSnackBar(context, message: "Successfully signed out!", isError: false);
+
+      showCustomSnackBar(context,
+          message: "Successfully signed out!", isError: false);
       return true;
     } catch (e) {
       showCustomSnackBar(

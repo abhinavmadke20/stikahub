@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:stikahub/components/components.dart';
 import 'package:stikahub/repositories/authentication/authentication_repository.dart';
 import 'package:stikahub/theme/theme.dart';
+import 'package:stikahub/ui/home/home_screen.dart';
 import 'package:stikahub/utils/utils.dart';
 
 class LoginProfile extends StatefulWidget {
@@ -25,6 +26,14 @@ class _LoginProfileState extends State<LoginProfile> {
         context,
         email: _emailController.text,
         password: _passwordController.text,
+      );
+      
+      Navigator.push(
+        // ignore: use_build_context_synchronously
+        context,
+        MaterialPageRoute(
+          builder: (context) => const HomeScreen(),
+        ),
       );
     } else {
       String errorMessage = 'Please fix the errors in the form';
@@ -115,8 +124,8 @@ class _LoginProfileState extends State<LoginProfile> {
                           controller: _passwordController,
                           hintText: "*********",
                           obscureText: visiblityPassword,
-                          validator: (value) =>
-                              OnboardingFieldsValidator().validatePassword(value),
+                          validator: (value) => OnboardingFieldsValidator()
+                              .validatePassword(value),
                           suffix: GestureDetector(
                             onTap: () {
                               setState(() {

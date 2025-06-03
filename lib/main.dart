@@ -1,5 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:stikahub/providers/auth/auth_provider.dart';
+import 'package:stikahub/repositories/authentication/authentication_repository.dart';
 import 'package:stikahub/utils/utils.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -20,9 +23,24 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: AuthWrapper(),
+    return MultiProvider(
+      providers: [
+        Provider<AuthenticationRepository>(
+          create: (_) => AuthenticationRepository(),
+        ),
+        ChangeNotifierProxyProvider<AuthenticationRepository,
+            UserProfileProvider>(
+          create: (context) => UserProfileProvider(
+            Provider.of<AuthenticationRepository>(context, listen: false),
+          ),
+          update: (context, authRepo, previous) =>
+              previous ?? UserProfileProvider(authRepo),
+        ),
+      ],
+      child: const MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: AuthWrapper(),
+      ),
     );
   }
 }

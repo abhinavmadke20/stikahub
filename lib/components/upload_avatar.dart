@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:stikahub/repositories/authentication/authentication_repository.dart';
 import 'package:stikahub/repositories/upload/upload.dart';
+import 'package:stikahub/ui/home/home_screen.dart';
 
 import '../theme/theme.dart';
 import '../utils/utils.dart';
@@ -12,7 +13,11 @@ class UploadAvatarScreen extends StatefulWidget {
   final String name;
   final String email;
   final String password;
-  const UploadAvatarScreen({super.key, required this.name, required this.email, required this.password});
+  const UploadAvatarScreen(
+      {super.key,
+      required this.name,
+      required this.email,
+      required this.password});
 
   @override
   State<UploadAvatarScreen> createState() => _UploadAvatarScreenState();
@@ -179,6 +184,14 @@ class _UploadAvatarScreenState extends State<UploadAvatarScreen> {
                         avatar: avatarUrl,
                         email: widget.email,
                         password: widget.password,
+                      );
+
+                      Navigator.push(
+                        // ignore: use_build_context_synchronously
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const HomeScreen(),
+                        ),
                       );
                     }
                   },
